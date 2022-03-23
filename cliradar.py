@@ -52,7 +52,7 @@ def get_line(start, end):
     ystep = 1 if y1 < y2 else -1
     y = y1
     points = []
-    for x in range(x1, x2 + 1):
+    for x in range(int(x1), int(x2) + 1):
         coord = (y, x) if is_steep else (x, y)
         points.append(coord)
         error -= abs(dy)
@@ -185,9 +185,12 @@ def insert_db(HexID, DateTime, Altitude, Latitude, Longitude):
         SQLQuery = 'SELECT Altitude, LastAltitude FROM data WHERE HexID = \'' + HexID + '\''
         cur.execute(SQLQuery)
         row = cur.fetchone()
-        if row[0] > row[1]: VState = '+'
-        if row[0] < row[1]: VState = '-'
-        if row[0] == row[1]: VState = ' '
+        if row[0] == None or row[1] == None:
+            VState = ' '
+        else:
+            if row[0] > row[1]: VState = '+'
+            if row[0] < row[1]: VState = '-'
+            if row[0] == row[1]: VState = ' '
         #Update
         SQLQuery = 'UPDATE data SET DateTime = \'' + str(DateTime) + '\', LastAltitude = Altitude, Altitude = ' + str(Altitude) + ', LastLongitude = Longitude, LastLatitude = Latitude, Longitude = ' + str(Longitude) + ', Latitude = ' + str(Latitude) + ', Direction = \'' + str(direction) + '\', Distance = \'' + str(distance) + '\', Heading = \'' + str(heading) + '\', HeadingBase = \'' + str(headingBase) + '\', VState = \'' + str(VState) + '\' WHERE HexID = \'' + str(HexID) + '\''
     cur.execute(SQLQuery)
@@ -364,12 +367,12 @@ init_db(cur)
 while True:
     try:
         data = client_socket.recv(1024)
-    except socket.error, e:
+    except socket.error as e:
         err = e.args[0]
         if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
             data = ''
         else:
-            print e
+            print(e)
             sys.exit(1)
     purgeOld()
     os.system('clear')
@@ -381,7 +384,7 @@ while True:
     paintLog()
     doSpin()
     buffer = data
-    spl = buffer.split('\n')
+    spl = str(buffer).split('\n')
     dti = time.strftime('%Y-%m-%d %H:%M:%S')
     for item in spl:
         splitter = item.split(',')
