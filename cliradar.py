@@ -238,8 +238,8 @@ def dist_on_geoid(lat1, lon1, lat2, lon2):
 
 def calculateDistance(startLon, startLat, endLon, endLat):
     try:
-        p1 = Point(str(startLon) + ' ' + str(startLat))
-        p2 = Point(str(endLon) + ' ' +  str(endLat))
+        p1 = Point(longitude=startLon, latitude=startLat)
+        p2 = Point(longitude=endLon, latitude=endLat)
         dist = distance.distance(p1,p2).kilometers
         dist = str(dist)[:5]
         return dist
